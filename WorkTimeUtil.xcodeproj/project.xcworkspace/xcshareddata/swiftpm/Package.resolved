@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "cryptoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/CryptoSwift",
+      "state" : {
+        "revision" : "5da70ba744d58d772201f03600eb16c53197652d",
+        "version" : "0.15.0"
+      }
+    },
+    {
+      "identity" : "swiftyhawk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cpageler93/SwiftyHawk",
+      "state" : {
+        "revision" : "10409c4bd28e9ea5ee92d200c74d74ddb89c5069",
+        "version" : "0.1.4"
+      }
+    }
+  ],
+  "version" : 2
+}
