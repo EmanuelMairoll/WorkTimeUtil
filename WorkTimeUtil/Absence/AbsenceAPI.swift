@@ -1,15 +1,14 @@
 import Foundation
-import SwiftyHawk
 
 struct AbsenceAPI {
     public let me: ID
 
     private let baseURL = URL(string: "https://app.absence.io")!
-    private let credentials: Hawk.Credentials
+    private let credentials: HawkCredentials
 
     init(id: String, key: String) {
         self.me = id
-        self.credentials = Hawk.Credentials(id: id, key: key, algoritm: .sha256)
+        self.credentials = HawkCredentials(id: id, key: key)
     }
 
     private func performRequest<T: Decodable>(path: String, method: String, body: Encodable) async throws -> T {
@@ -18,13 +17,9 @@ struct AbsenceAPI {
         request.httpMethod = method
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let headerResult = try? Hawk.Client.header(uri: url.absoluteString,
-                                                   method: method,
-                                                   credentials: credentials,
-                                                   nonce: UUID().uuidString)
-        if let headerValue = headerResult?.headerValue {
-            request.addValue(headerValue, forHTTPHeaderField: "Authorization")
-        }
+        let nonce = UUID().uuidString
+        let headerValue = try HawkClient.header(uri: url.absoluteString, method: method, credentials: credentials, nonce: nonce)
+        request.addValue(headerValue, forHTTPHeaderField: "Authorization")
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601ex

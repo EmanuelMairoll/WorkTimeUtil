@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		884D7BD629CF6598007070D5 /* AbsenceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884D7BD529CF6598007070D5 /* AbsenceAPI.swift */; };
+		884D7BDA29D192C8007070D5 /* Hawk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884D7BD929D192C8007070D5 /* Hawk.swift */; };
 		88BBE76629CF5191003F2B6A /* AbsenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BBE76529CF5191003F2B6A /* AbsenceManager.swift */; };
 		88F789F929CEF9850018CE04 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F789F829CEF9850018CE04 /* main.swift */; };
 		88F78A1C29CF19270018CE04 /* WorkEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F78A1B29CF19270018CE04 /* WorkEvent.swift */; };
 		88F78A2029CF19DB0018CE04 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F78A1F29CF19DB0018CE04 /* DateUtil.swift */; };
 		88F78A2429CF2C1C0018CE04 /* CalenderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F78A2329CF2C1C0018CE04 /* CalenderManager.swift */; };
-		88FF198A29CF5CF400BDD1A2 /* SwiftyHawk in Frameworks */ = {isa = PBXBuildFile; productRef = 88FF198929CF5CF400BDD1A2 /* SwiftyHawk */; };
 		88FF199D29CF5D4A00BDD1A2 /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FF199029CF5D4900BDD1A2 /* DTOs.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		884D7BD529CF6598007070D5 /* AbsenceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbsenceAPI.swift; sourceTree = "<group>"; };
+		884D7BD929D192C8007070D5 /* Hawk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hawk.swift; sourceTree = "<group>"; };
 		88BBE76529CF5191003F2B6A /* AbsenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbsenceManager.swift; sourceTree = "<group>"; };
 		88F789F529CEF9850018CE04 /* WorkTimeUtil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WorkTimeUtil; sourceTree = BUILT_PRODUCTS_DIR; };
 		88F789F829CEF9850018CE04 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -46,7 +47,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88FF198A29CF5CF400BDD1A2 /* SwiftyHawk in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				884D7BD529CF6598007070D5 /* AbsenceAPI.swift */,
+				884D7BD929D192C8007070D5 /* Hawk.swift */,
 				88FF199029CF5D4900BDD1A2 /* DTOs.swift */,
 			);
 			path = Absence;
@@ -109,7 +110,6 @@
 			);
 			name = WorkTimeUtil;
 			packageProductDependencies = (
-				88FF198929CF5CF400BDD1A2 /* SwiftyHawk */,
 			);
 			productName = WorkTimeUtil;
 			productReference = 88F789F529CEF9850018CE04 /* WorkTimeUtil */;
@@ -140,7 +140,6 @@
 			);
 			mainGroup = 88F789EC29CEF9850018CE04;
 			packageReferences = (
-				88FF198829CF5CF400BDD1A2 /* XCRemoteSwiftPackageReference "SwiftyHawk" */,
 			);
 			productRefGroup = 88F789F629CEF9850018CE04 /* Products */;
 			projectDirPath = "";
@@ -156,6 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				884D7BDA29D192C8007070D5 /* Hawk.swift in Sources */,
 				88F789F929CEF9850018CE04 /* main.swift in Sources */,
 				88BBE76629CF5191003F2B6A /* AbsenceManager.swift in Sources */,
 				88F78A2029CF19DB0018CE04 /* DateUtil.swift in Sources */,
@@ -328,25 +328,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		88FF198829CF5CF400BDD1A2 /* XCRemoteSwiftPackageReference "SwiftyHawk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/cpageler93/SwiftyHawk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.4;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		88FF198929CF5CF400BDD1A2 /* SwiftyHawk */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 88FF198829CF5CF400BDD1A2 /* XCRemoteSwiftPackageReference "SwiftyHawk" */;
-			productName = SwiftyHawk;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 88F789ED29CEF9850018CE04 /* Project object */;
 }
