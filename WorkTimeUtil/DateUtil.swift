@@ -69,44 +69,6 @@ class CalUtil {
         // Sunday is 1 and Saturday is 7 in the Gregorian calendar
         return weekday == 1 || weekday == 7
     }
-
-    static func calculateActualWorkHours(startDate: Date, endDate: Date, workEvents: [WorkEvent]) -> TimeInterval {
-        var totalDuration: TimeInterval = 0
-        for workEvent in workEvents.filter({ $0.isWork }) {
-            let duration = workEvent.endDate.timeIntervalSince(workEvent.startDate)
-            totalDuration += duration
-        }
-
-        return totalDuration / 3600
-    }
-
-    static func calculateTargetWorkHours(startDate: Date, endDate: Date, workEvents: [WorkEvent]) -> TimeInterval {
-        let workHoursPerWeek: TimeInterval = 22.0
-
-        var totalDuration: TimeInterval = 0
-        var currentDate = startDate
-
-        while currentDate <= endDate {
-            // Check if current date is a weekend or holiday
-            let calendar = Calendar.current
-            let dayOfWeek = calendar.component(.weekday, from: currentDate)
-            if dayOfWeek == 1 || dayOfWeek == 7 {
-                // Weekend
-            } else {
-                // Work day
-                let matchingEvents = workEvents.filter { $0.startDate <= currentDate && $0.endDate > currentDate }
-                let isWorkDay = matchingEvents.isEmpty || matchingEvents.allSatisfy { $0.isWork }
-                if isWorkDay {
-                    totalDuration += workHoursPerWeek / 5.0
-                }
-            }
-
-            // Move to the next day
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
-        }
-
-        return totalDuration
-    }
 }
 
 extension Date {
