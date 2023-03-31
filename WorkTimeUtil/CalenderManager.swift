@@ -47,7 +47,7 @@ class CalendarManager {
             }
 
             if let type = type {
-                workEvents.append(WorkEvent(startDate: event.startDate, endDate: event.endDate, type: type))
+                workEvents.append(WorkEvent(startDate: event.startDate.cropSeconds(), endDate: event.endDate.cropSeconds(), type: type))
             }
         }
 

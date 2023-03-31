@@ -82,6 +82,12 @@ extension Date {
         return calendar.date(byAdding: .day, value: 1, to: startOfDay())!
     }
 
+    func cropSeconds() -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+        return calendar.date(from: components) ?? self
+    }
+
     func convert(from: TimeZone = .current, to: TimeZone) -> Date {
         let calendar = Calendar.current
         let targetOffset = TimeInterval(from.secondsFromGMT(for: self))
