@@ -1,9 +1,8 @@
 import Foundation
 
 func calculateWorkHours(_ parameters: [String], calendar: CalendarManager) {
-    let ud = UserDefaults.standard
-    let workHoursPerWeek = ud.double(forKey: "workHoursPerWeek") == 0.0 ? 38.5 : ud.double(forKey: "workHoursPerWeek")
-    let removeLunchBreak = ud.bool(forKey: "removeLunchBreak")
+    let workHoursPerWeek = getWorkHoursPerWeek() ?? 38.5
+    let removeLunchBreak = getRemoveLunchBreak() ?? true
 
     for parameter in parameters {
         guard let (startDate, endDate) = parseDateParameter(parameter) else {
@@ -38,8 +37,6 @@ private func calculateActualWorkHours(startDate: Date, endDate: Date, workEvents
 
 
 private func calculateTargetWorkHours(startDate: Date, endDate: Date, workEvents: [WorkEvent], workHoursPerWeek: TimeInterval) -> TimeInterval {
-    let workHoursPerWeek: TimeInterval = 22.0
-
     var totalDuration: TimeInterval = 0
     var currentDate = startDate
 

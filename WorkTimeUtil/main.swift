@@ -60,7 +60,7 @@ public func parseDateParameter(_ command: String) -> (startDate: Date, endDate: 
 
 func main() async {
     let calendarManager = CalendarManager()
-    let apiKey = UserDefaults.standard.string(forKey: "absenceIOCreds")?.split(separator: ":")
+    let apiKey = getAbsenceIOCreds()?.split(separator: ":")
     let absenceAPI = apiKey != nil ? AbsenceAPI(id: String(apiKey![0]), key: String(apiKey![1])) : nil
 
     guard await calendarManager.requestAccess() else {

@@ -1,5 +1,7 @@
 import Foundation
 
+fileprivate let defaults = UserDefaults(suiteName: "com.emanuelmairoll.worktimeutil")!
+
 func config(key: String?, value: String?) {
     guard let key = key else {
         printConfigKeys()
@@ -35,14 +37,14 @@ private func printConfigKeys() {
 private func setAndValidateConfigValue(key: String, value: String?, validationFunction: (String) -> Bool, errorMessage: String) {
     if let value = value {
         if validationFunction(value) {
-            UserDefaults.standard.set(value, forKey: key)
+            defaults.set(value, forKey: key)
             print("\(key) set to '\(value)'.")
         } else {
             print(errorMessage)
             exit(1)
         }
     } else {
-        if let existingValue = UserDefaults.standard.string(forKey: key) {
+        if let existingValue = defaults.string(forKey: key) {
             print("\(key): \(existingValue)")
         } else {
             print("No value set for key '\(key)'.")
@@ -62,3 +64,16 @@ private func isValidWorkHoursPerWeek(_ hours: String) -> Bool {
 private func isValidRemoveLunchBreak(_ value: String) -> Bool {
     return value.lowercased() == "true" || value.lowercased() == "false"
 }
+
+func getAbsenceIOCreds() -> String? {
+    return defaults.string(forKey: "absenceIOCreds")
+}
+
+func getWorkHoursPerWeek() -> Double? {
+    return defaults.double(forKey: "workHoursPerWeek")
+}
+
+func getRemoveLunchBreak() -> Bool? {
+    return defaults.bool(forKey: "removeLunchBreak")
+}
+
