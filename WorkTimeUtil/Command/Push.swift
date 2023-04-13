@@ -22,7 +22,7 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
 
             // Fetch the work events using the CalendarManager instance
             let unstretchedWorkEvents = calendar.fetchEvents(startDate: startDate, endDate: endDate)
-            let nonUnionWorkEvents = unstretchedWorkEvents.map { $0.isWork ? WorkEvent(startDate: $0.startDate.startOfDay(), endDate: $0.endDate.endOfDay(), type: $0.type) : $0 }
+            let nonUnionWorkEvents = unstretchedWorkEvents.map { $0.isWork ? WorkEvent(startDate: $0.startDate.startOfDay(), endDate: $0.endDate.endOfDay(), type: $0.type, commentary: $0.commentary) : $0 }
             var workEvents: [WorkEvent] = []
 
             for event in nonUnionWorkEvents {
@@ -46,12 +46,13 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
                 let startDate: Date
                 let endDate: Date
                 let reason: ID
+                let commentary: String?
             }
 
             var missingAbsences: [MissingAbsence] = []
 
             for event in workEvents {
-                guard !myAbsences.contains(where: { $0.start == event.startDate && $0.end == event.endDate }) else {
+                guard !myAbsences.contains(where: { $0.start.startOfDay() == event.startDate.startOfDay() && $0.end.endOfDay() == event.endDate.endOfDay() }) else {
                     continue
                 }
 
@@ -59,9 +60,11 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
                 case .office, .companyEvent, .meeting:
                     continue
                 case .homeOffice:
-                    missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Homeoffice" }!.key))
+                    missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Homeoffice" }!.key, commentary: event.commentary))
                 case .vacation:
-                    missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Vacation" }!.key))
+                    missingAbsences.append(MissingAbsence(startDate: event.startDate.startOfDay(), endDate: event.endDate.endOfDay(), reason: reasons.first { $1.name == "Vacation" }!.key, commentary: event.commentary))
+                case .compensatory:
+                    missingAbsences.append(MissingAbsence(startDate: event.startDate.startOfDay(), endDate: event.endDate.endOfDay(), reason: reasons.first { $1.name == "Compensatory time" }!.key, commentary: event.commentary))
                 default:
                     continue
                 }
@@ -74,11 +77,11 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             var currentDate = startDate
             while currentDate <= endDate {
                 if !CalUtil.isWeekend(date: currentDate) {
-                    let hasWorkEvent = workEvents.contains(where: { $0.startDate.startOfDay() == currentDate.startOfDay() })
+                    let hasWorkEvent = workEvents.contains(where: { $0.startDate.startOfDay() <= currentDate.startOfDay() && $0.endDate.endOfDay() >= currentDate.endOfDay() })
                     let hasOffDutyAbsence = myAbsences.contains(where: { $0.start.startOfDay() == currentDate.startOfDay() && $0.reasonId == offDutyReasonID })
 
                     if !hasWorkEvent && !hasOffDutyAbsence {
-                        missingAbsences.append(MissingAbsence(startDate: currentDate.startOfDay(), endDate: currentDate.endOfDay(), reason: offDutyReasonID))
+                        missingAbsences.append(MissingAbsence(startDate: currentDate.startOfDay(), endDate: currentDate.endOfDay(), reason: offDutyReasonID, commentary: nil))
                     }
                 }
                 currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
@@ -99,7 +102,12 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             // List the missing absences on the console
             print("Missing absences for '\(parameter)':")
             for (index, m) in missingAbsences.enumerated() {
-                print("\(index + 1). Day: \(df.string(from: m.startDate)), Reason: \(reasons[m.reason]!.name)")
+                let startDate = df.string(from: m.startDate)
+                let endDate = df.string(from: m.endDate)
+                let reason = reasons[m.reason]!.name
+                let commentary = m.commentary
+
+                print("\(index + 1). Start: \(startDate), End: \(endDate), Reason: \(reason)" + (commentary != nil ? ", Commentary: \(commentary!)" : ""))
             }
 
             // Ask the user for acknowledgment
@@ -107,7 +115,7 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             if let input = readLine(), input.lowercased() == "y" {
                 // Create the missing absences using the AbsenceAPI instance
                 for m in missingAbsences {
-                    let createRequest = CreateRequest(assignedToId: me._id, approverId: reasons[m.reason]!.requiresApproval ? approver._id : nil, start: m.startDate, end: m.endDate, reasonId: m.reason)
+                    let createRequest = CreateRequest(assignedToId: me._id, approverId: reasons[m.reason]!.requiresApproval ? approver._id : nil, start: m.startDate, end: m.endDate, reasonId: m.reason, commentary: m.commentary)
                     let _ = try await api.createAbsence(request: createRequest)
                 }
 

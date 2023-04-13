@@ -20,6 +20,7 @@ struct Absence: Codable {
     public let assignedTo: User?
     public let approver: User?
     public let approverId: ID?
+    public let commentary: String?
     public let reason: Reason?
     public let reasonId: ID?
 }
@@ -96,4 +97,5 @@ struct CreateRequest: Encodable {
     public var start: Date
     public var end: Date
     public var reasonId: ID
+    public let commentary: String?
 }

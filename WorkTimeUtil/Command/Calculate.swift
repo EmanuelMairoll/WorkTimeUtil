@@ -49,7 +49,7 @@ private func calculateTargetWorkHours(startDate: Date, endDate: Date, workEvents
         } else {
             // Work day
             let matchingEvents = workEvents.filter { $0.startDate <= currentDate && $0.endDate > currentDate }
-            let isWorkDay = matchingEvents.isEmpty || matchingEvents.allSatisfy { $0.isWork }
+            let isWorkDay = !matchingEvents.contains { $0.reducesTarget };
             if isWorkDay {
                 totalDuration += workHoursPerWeek / 5.0
             }

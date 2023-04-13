@@ -79,7 +79,12 @@ extension Date {
 
     func endOfDay() -> Date {
         let calendar = Calendar.current
-        return calendar.date(byAdding: .day, value: 1, to: startOfDay())!
+
+        if calendar.startOfDay(for: self) == self {
+            return self
+        }
+
+        return calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: self))!.convert(to: .gmt)
     }
 
     func cropSeconds() -> Date {

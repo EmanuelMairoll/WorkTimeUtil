@@ -41,13 +41,17 @@ class CalendarManager {
                 type = .sick
             case "Vacation":
                 type = .vacation
+            case "Compensatory Time":
+                   type = .compensatory
+            case "Holiday":
+                   type = .holiday
             default:
                 type = nil
                 print("Warning: Unknown event found. Title: \(event.title!), Start Date: \(event.startDate!), End Date: \(event.endDate!)")
             }
 
             if let type = type {
-                workEvents.append(WorkEvent(startDate: event.startDate.cropSeconds(), endDate: event.endDate.cropSeconds(), type: type))
+                workEvents.append(WorkEvent(startDate: event.startDate.cropSeconds(), endDate: event.endDate.cropSeconds(), type: type, commentary: event.notes))
             }
         }
 
