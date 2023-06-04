@@ -96,11 +96,11 @@ extension Date {
         return cal.date(from: components) ?? self
     }
 
-    func stripTimezone(_ timezone: TimeZone?)  -> Date {
+    func stripTimezone(_ timezone: TimeZone?) -> Date {
         guard let timezone else {
             return self
         }
-        
+
         let offset = TimeInterval(timezone.secondsFromGMT(for: self))
         return Calendar.gmt.date(byAdding: .second, value: Int(offset), to: self)!
     }
@@ -131,7 +131,7 @@ extension JSONEncoder.DateEncodingStrategy {
     static var iso8601ex: JSONEncoder.DateEncodingStrategy {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        
+
         return .custom { (date, encoder) throws in
             let dateString = dateFormatter.string(from: date)
 

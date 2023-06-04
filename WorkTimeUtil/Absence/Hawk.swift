@@ -1,5 +1,5 @@
-import Foundation
 import CryptoKit
+import Foundation
 
 struct HawkCredentials {
     let id: String
@@ -41,7 +41,7 @@ class HawkClient {
             host.lowercased(),
             String(port),
             "",
-            ""
+            "",
         ].joined(separator: "\n")
 
         return normalized + "\n"

@@ -50,10 +50,6 @@ struct Reason: Codable {
     public let requiresApproval: Bool
 }
 
-
-
-
-
 struct ListRequest: Encodable {
     public var skip: Int? = 0
     public var limit: Int? = 50
@@ -75,7 +71,7 @@ struct Filter: Encodable {
     }
 
     init(start: Date? = nil, end: Date? = nil, assignedToId: ID, assignedToEmail: String? = nil) {
-        if let start { // yep, that has to be switched around... brain, I know
+        if let start {  // yep, that has to be switched around... brain, I know
             self.end = ["$gte": start.ISO8601Format()]
         }
 

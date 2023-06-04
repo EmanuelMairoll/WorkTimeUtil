@@ -40,7 +40,6 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             let absencesResponse = try await api.getAbsences(request: .init(filter: filter))
             let myAbsences = absencesResponse.data
 
-
             // Compare the work events with the absences and identify the missing absences
             struct MissingAbsence {
                 let startDate: Date
@@ -87,7 +86,7 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
                 currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
             }
 
-            missingAbsences.sort { $0.startDate < $1.startDate}
+            missingAbsences.sort { $0.startDate < $1.startDate }
 
             let df = DateFormatter()
             df.timeZone = TimeZone.current
@@ -129,6 +128,3 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
         print("Error while fetching or creating absences: \(error.localizedDescription)")
     }
 }
-
-
-

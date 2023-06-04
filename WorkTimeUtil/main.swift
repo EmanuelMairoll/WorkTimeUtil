@@ -69,7 +69,8 @@ func main() async {
     }
 
     guard let command = parseCommand(CommandLine.arguments) else {
-        print("""
+        print(
+            """
             Invalid command. Usage:
             worktimeutil calculate [W|W<n>[/<yy>]|M|M<n>[/<yy>]]
             worktimeutil push [W|W<n>[/<yy>]|M|M<n>[/<yy>]]

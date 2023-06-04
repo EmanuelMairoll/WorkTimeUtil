@@ -1,6 +1,6 @@
 import Foundation
 
-fileprivate let defaults = UserDefaults(suiteName: "com.emanuelmairoll.worktimeutil")!
+private let defaults = UserDefaults(suiteName: "com.emanuelmairoll.worktimeutil")!
 
 func config(key: String?, value: String?) {
     guard let key = key else {
@@ -25,7 +25,7 @@ private func printConfigKeys() {
     let keys = [
         "absenceIOCreds",
         "workHoursPerWeek",
-        "removeLunchBreak"
+        "removeLunchBreak",
     ]
 
     print("Available configuration keys:")
@@ -76,4 +76,3 @@ func getWorkHoursPerWeek() -> Double? {
 func getRemoveLunchBreak() -> Bool? {
     return defaults.bool(forKey: "removeLunchBreak")
 }
-

@@ -1,5 +1,5 @@
-import Foundation
 import EventKit
+import Foundation
 
 class CalendarManager {
     let eventStore = EKEventStore()
@@ -18,9 +18,10 @@ class CalendarManager {
     }
 
     func fetchEvents(startDate: Date, endDate: Date) -> [WorkEvent] {
-        let predicate = eventStore.predicateForEvents(withStart: startDate,
-                                                       end: endDate,
-                                                       calendars: [getWorkTimeCalendar()])
+        let predicate = eventStore.predicateForEvents(
+            withStart: startDate,
+            end: endDate,
+            calendars: [getWorkTimeCalendar()])
         let events = eventStore.events(matching: predicate)
 
         var workEvents: [WorkEvent] = []
@@ -42,9 +43,9 @@ class CalendarManager {
             case "Vacation":
                 type = .vacation
             case "Compensatory Time":
-                   type = .compensatory
+                type = .compensatory
             case "Holiday":
-                   type = .holiday
+                type = .holiday
             default:
                 type = nil
                 print("Warning: Unknown event found. Title: \(event.title!), Start Date: \(event.startDate!), End Date: \(event.endDate!)")
@@ -64,7 +65,6 @@ class CalendarManager {
 
         return workEvents
     }
-
 
     func getWorkTimeCalendar() -> EKCalendar {
         guard let calendar = eventStore.calendars(for: .event).first(where: { $0.title == "Work Time" }) else {

@@ -13,14 +13,10 @@ enum WorkType {
 
 extension WorkEvent {
     var isWork: Bool {
-        get {
-            type == .office || type == .homeOffice || type == .meeting
-        }
+        type == .office || type == .homeOffice || type == .meeting
     }
 
     var reducesTarget: Bool {
-        get {
-            type == .companyEvent || type == .vacation || type == .holiday || type == .sick
-        }
+        type == .companyEvent || type == .vacation || type == .holiday || type == .sick
     }
 }
