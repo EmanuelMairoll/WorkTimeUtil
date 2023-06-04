@@ -22,11 +22,11 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
 
             // Fetch the work events using the CalendarManager instance
             let unstretchedWorkEvents = calendar.fetchEvents(startDate: startDate, endDate: endDate)
-            let nonUnionWorkEvents = unstretchedWorkEvents.map { $0.isWork ? WorkEvent(startDate: $0.startDate.startOfDay(), endDate: $0.endDate.endOfDay(), type: $0.type, commentary: $0.commentary) : $0 }
+            let nonUnionWorkEvents = unstretchedWorkEvents.map { $0.isWork || true ? WorkEvent(startDate: $0.startDate.cropTime(), endDate: $0.endDate.cropTime().plusOneDay(), type: $0.type, commentary: $0.commentary) : $0 }
             var workEvents: [WorkEvent] = []
 
             for event in nonUnionWorkEvents {
-                if let existingEventIndex = workEvents.firstIndex(where: { $0.startDate.startOfDay() == event.startDate.startOfDay() }) {
+                if let existingEventIndex = workEvents.firstIndex(where: { $0.startDate == event.startDate }) {
                     if event.type == .office && workEvents[existingEventIndex].type == .homeOffice {
                         workEvents[existingEventIndex] = event
                     }
@@ -52,7 +52,7 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             var missingAbsences: [MissingAbsence] = []
 
             for event in workEvents {
-                guard !myAbsences.contains(where: { $0.start.startOfDay() == event.startDate.startOfDay() && $0.end.endOfDay() == event.endDate.endOfDay() }) else {
+                if myAbsences.contains(where: { $0.start == event.startDate && $0.end == event.endDate }) {
                     continue
                 }
 
@@ -62,9 +62,9 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
                 case .homeOffice:
                     missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Homeoffice" }!.key, commentary: event.commentary))
                 case .vacation:
-                    missingAbsences.append(MissingAbsence(startDate: event.startDate.startOfDay(), endDate: event.endDate.endOfDay(), reason: reasons.first { $1.name == "Vacation" }!.key, commentary: event.commentary))
+                    missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Vacation" }!.key, commentary: event.commentary))
                 case .compensatory:
-                    missingAbsences.append(MissingAbsence(startDate: event.startDate.startOfDay(), endDate: event.endDate.endOfDay(), reason: reasons.first { $1.name == "Compensatory time" }!.key, commentary: event.commentary))
+                    missingAbsences.append(MissingAbsence(startDate: event.startDate, endDate: event.endDate, reason: reasons.first { $1.name == "Compensatory time" }!.key, commentary: event.commentary))
                 default:
                     continue
                 }
@@ -73,15 +73,15 @@ func pushToAbsence(_ parameters: [String], calendar: CalendarManager, absenceAPI
             let offDutyReasonID = reasons.first { $1.name == "Off duty due to part-time work agreement" }!.key
 
             // Add missing "Off Duty" absences for weekdays with no work events
-            let calendar = Calendar.current
+            let calendar = Calendar.gmt
             var currentDate = startDate
-            while currentDate <= endDate {
+            while currentDate < endDate {
                 if !CalUtil.isWeekend(date: currentDate) {
-                    let hasWorkEvent = workEvents.contains(where: { $0.startDate.startOfDay() <= currentDate.startOfDay() && $0.endDate.endOfDay() >= currentDate.endOfDay() })
-                    let hasOffDutyAbsence = myAbsences.contains(where: { $0.start.startOfDay() == currentDate.startOfDay() && $0.reasonId == offDutyReasonID })
+                    let hasWorkEvent = workEvents.contains(where: { $0.startDate <= currentDate && $0.endDate > currentDate })
+                    let hasOffDutyAbsence = myAbsences.contains(where: { $0.start == currentDate && $0.reasonId == offDutyReasonID })
 
                     if !hasWorkEvent && !hasOffDutyAbsence {
-                        missingAbsences.append(MissingAbsence(startDate: currentDate.startOfDay(), endDate: currentDate.endOfDay(), reason: offDutyReasonID, commentary: nil))
+                        missingAbsences.append(MissingAbsence(startDate: currentDate.cropTime(), endDate: currentDate.cropTime().plusOneDay(), reason: offDutyReasonID, commentary: nil))
                     }
                 }
                 currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!

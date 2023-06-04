@@ -2,15 +2,15 @@ import Foundation
 
 class CalUtil {
     static func startAndEndDatesForCurrentWeek() -> (startDate: Date, endDate: Date) {
-        let calendar = Calendar.current
+        let cal = Calendar.gmt
         let now = Date()
-        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
-        let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
+        let startOfWeek = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
+        let endOfWeek = cal.date(byAdding: .day, value: 6, to: startOfWeek)!
         return (startOfWeek, endOfWeek)
     }
 
     static func startAndEndDatesForWeek(week: Int, year: Int?) -> (startDate: Date, endDate: Date) {
-        let calendar = Calendar.current
+        let calendar = Calendar.gmt
         let now = Date()
         var currentYear = calendar.component(.year, from: now)
 
@@ -31,7 +31,7 @@ class CalUtil {
     }
 
     static func startAndEndDatesForCurrentMonth() -> (startDate: Date, endDate: Date) {
-        let calendar = Calendar.current
+        let calendar = Calendar.gmt
         let now = Date()
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
         let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth)!
@@ -39,7 +39,7 @@ class CalUtil {
     }
 
     static func startAndEndDatesForMonth(month: Int, year: Int?) -> (startDate: Date, endDate: Date) {
-        let calendar = Calendar.current
+        let calendar = Calendar.gmt
         let now = Date()
 
         var currentYear = calendar.component(.year, from: now)
@@ -60,7 +60,7 @@ class CalUtil {
     }
 
     static func isWeekend(date: Date) -> Bool {
-        let calendar = Calendar.current
+        let calendar = Calendar.gmt
         let components = calendar.dateComponents([.weekday], from: date)
         guard let weekday = components.weekday else {
             return false
@@ -71,35 +71,38 @@ class CalUtil {
     }
 }
 
+extension Calendar {
+    static var gmt: Calendar {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = .gmt
+        return cal
+    }
+}
+
 extension Date {
-    func startOfDay() -> Date {
-        let calendar = Calendar.current
-        return calendar.startOfDay(for: self).convert(to: .gmt) //HACK
+    func cropTime() -> Date {
+        let cal = Calendar.gmt
+        let components = cal.dateComponents([.year, .month, .day], from: self)
+        return cal.date(from: components) ?? self
     }
 
-    func endOfDay() -> Date {
-        let calendar = Calendar.current
-
-        if calendar.startOfDay(for: self) == self {
-            return self
-        }
-
-        return calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: self))!.convert(to: .gmt)
+    func plusOneDay() -> Date {
+        return Calendar.gmt.date(byAdding: .day, value: 1, to: self)!
     }
 
     func cropSeconds() -> Date {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
-        return calendar.date(from: components) ?? self
+        let cal = Calendar.gmt
+        let components = cal.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+        return cal.date(from: components) ?? self
     }
 
-    func convert(from: TimeZone = .current, to: TimeZone) -> Date {
-        let calendar = Calendar.current
-        let targetOffset = TimeInterval(from.secondsFromGMT(for: self))
-        let localOffset = TimeInterval(to.secondsFromGMT(for: self))
-
-        let totalOffset = targetOffset - localOffset
-        return calendar.date(byAdding: .second, value: Int(totalOffset), to: self)!
+    func stripTimezone(_ timezone: TimeZone?)  -> Date {
+        guard let timezone else {
+            return self
+        }
+        
+        let offset = TimeInterval(timezone.secondsFromGMT(for: self))
+        return Calendar.gmt.date(byAdding: .second, value: Int(offset), to: self)!
     }
 }
 

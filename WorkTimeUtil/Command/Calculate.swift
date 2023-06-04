@@ -42,7 +42,7 @@ private func calculateTargetWorkHours(startDate: Date, endDate: Date, workEvents
 
     while currentDate <= endDate {
         // Check if current date is a weekend or holiday
-        let calendar = Calendar.current
+        let calendar = Calendar.gmt
         let dayOfWeek = calendar.component(.weekday, from: currentDate)
         if dayOfWeek == 1 || dayOfWeek == 7 {
             // Weekend

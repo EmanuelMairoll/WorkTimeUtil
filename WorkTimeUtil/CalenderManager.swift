@@ -51,7 +51,14 @@ class CalendarManager {
             }
 
             if let type = type {
-                workEvents.append(WorkEvent(startDate: event.startDate.cropSeconds(), endDate: event.endDate.cropSeconds(), type: type, commentary: event.notes))
+                workEvents.append(
+                    WorkEvent(
+                        startDate: event.startDate.stripTimezone(event.timeZone ?? .current).cropSeconds(),
+                        endDate: event.endDate.stripTimezone(event.timeZone ?? .current).cropSeconds(),
+                        type: type,
+                        commentary: event.notes
+                    )
+                )
             }
         }
 
